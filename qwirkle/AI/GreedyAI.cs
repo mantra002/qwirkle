@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace Qwirkle
 {
-    class Program
+    class GreedyAI
     {
-        static void Main(string[] args)
-        {
-        }
     }
 }

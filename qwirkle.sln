@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.352
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "qwirkle", "qwirkle\qwirkle.csproj", "{6B5898E1-72DC-4924-AF04-BECDCD3C033C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qwirkle", "qwirkle\Qwirkle.csproj", "{6B5898E1-72DC-4924-AF04-BECDCD3C033C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6BA4867E-CE5A-458D-8F00-8F6EDEAC423B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

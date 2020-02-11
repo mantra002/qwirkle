@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace Qwirkle
 {
-    class Program
+    class Board
     {
-        static void Main(string[] args)
-        {
-        }
     }
 }
