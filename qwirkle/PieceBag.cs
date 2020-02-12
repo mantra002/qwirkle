@@ -12,17 +12,17 @@ namespace Qwirkle
         
         public PieceBag()
         {
-
+            this.FillBagWithPieces();
         }
 
         public void FillBagWithPieces(bool emptyBagFirst = true)
         {
             if(emptyBagFirst) this.bag.Clear();
-            for(int i = 0; i < Rules.NUMBER_OF_DUPLICATE_PIECES; i++)
+            for(int i = 0; i < Rules.NumberOfDuplicatePieces; i++)
             {
-                foreach(Rules.Colors color in Enum.GetValues(typeof(Rules.Colors)))
+                foreach(Rules.Color color in Enum.GetValues(typeof(Rules.Color)))
                 {
-                    foreach (Rules.Shapes shape in Enum.GetValues(typeof(Rules.Shapes)))
+                    foreach (Rules.Shape shape in Enum.GetValues(typeof(Rules.Shape)))
                     {
                         bag.Add(new Piece(color, shape));
                     }
@@ -31,10 +31,20 @@ namespace Qwirkle
             bag.Shuffle();
         }
 
+
+        public int BagCount
+        {
+            get { return this.bag.Count; }
+        }
+
         public Piece DrawTile()
         {
-            Piece p = bag.Take(1);
-
+            if (bag.Count == 0)
+            {
+                return null;
+            }
+            Piece p = bag[0];
+            bag.RemoveAt(0);
             return p;
         }
     }

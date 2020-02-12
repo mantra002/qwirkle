@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace Qwirkle
 {
-    public class Rules
+    public static class Rules
     {
-        public const int NUMBER_OF_DUPLICATE_PIECES = 3;
+        public const int NumberOfDuplicatePieces = 3;
+        public const int InitialBoardSize = 5;
 
-        public enum Colors
+        public enum Color
         {
             Red,
             Orange,
@@ -20,7 +21,7 @@ namespace Qwirkle
             Green
         }
 
-        public enum Shapes
+        public enum Shape
         {
             Circle,
             Cross,
