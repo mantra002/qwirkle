@@ -14,8 +14,8 @@ namespace Qwirkle
             Random r = new Random();
             PieceBag pb = new PieceBag();
             Board b = new Board();
-            List<Coords> corSet;
-            Coords c;
+            List<Coord> corSet;
+            Coord c;
             b.PrintFancyBoard();
             Piece p = pb.DrawTile();
             while (p != null)
@@ -25,7 +25,7 @@ namespace Qwirkle
                 if (corSet != null && corSet.Count > 0)
                 {
                     c = corSet[r.Next(0, corSet.Count)];
-                    b.AddPiece(c.x, c.y, p);
+                    b.AddPiece(c.X, c.Y, p);
                     b.PrintFancyBoard();
                 }
                 p = pb.DrawTile();

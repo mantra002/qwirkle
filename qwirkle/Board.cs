@@ -18,6 +18,20 @@ namespace Qwirkle
         public int SizeX { get => sizeX; set => sizeX = value; }
         public int SizeY { get => sizeY; set => sizeY = value; }
 
+        private enum Orientation
+        {
+            Vertical,
+            Horizontal
+        }
+
+        private enum Direction
+        {
+            North,
+            East,
+            South,
+            West
+        }
+
         public Board()
         {
             this.SizeX = Rules.InitialBoardSize;
@@ -44,12 +58,12 @@ namespace Qwirkle
             this.gameBoard = this.cloneBoard(this.previousGameBoard);
         }
 
-        public List<Coords> GetPossibleOpenSquares()
+        public List<Coord> GetPossibleOpenSquares()
         {
-            List<Coords> possibleSquares = new List<Coords>();
+            List<Coord> possibleSquares = new List<Coord>();
             if(this.newBoard)
             {
-                possibleSquares.Add(new Coords(this.sizeX / 2, this.sizeY / 2));
+                possibleSquares.Add(new Coord(this.sizeX / 2, this.sizeY / 2));
                 return possibleSquares;
             }
             for (int x = 1; x < this.SizeX-1; x++)
@@ -63,7 +77,7 @@ namespace Qwirkle
                         this.gameBoard[x][y-1] != 0
                         ))
                     {
-                        possibleSquares.Add(new Coords(x, y));
+                        possibleSquares.Add(new Coord(x, y));
                     }
                         
                 }
@@ -71,40 +85,68 @@ namespace Qwirkle
             return possibleSquares;
         }
 
-        public List<Coords> GetValidSquares(List<Coords> possibleSquares, Piece p)
+        public List<Coord> GetValidSquares(List<Coord> possibleSquares, Piece p)
         {
-            List<Coords> validMoves = new List<Coords>();
+            List<Coord> validMoves = new List<Coord>();
             if (possibleSquares == null || possibleSquares.Count == 0)
             {
                 return null;
             }
             if (this.newBoard)
             {
-                validMoves.Add(new Coords(this.sizeX / 2, this.sizeY / 2));
+                validMoves.Add(new Coord(this.sizeX / 2, this.sizeY / 2));
                 return validMoves;
             }
 
-            foreach(Coords c in possibleSquares)
+            foreach(Coord c in possibleSquares)
             {
                 if (
-                    (this.gameBoard[c.x + 1][c.y] / 6 == (int)p.Shape ||
-                    this.gameBoard[c.x + 1][c.y] % 6 == (int)p.Color ||
-                    this.gameBoard[c.x + 1][c.y] == 0) &&
-                    (this.gameBoard[c.x][c.y+1] / 6 == (int)p.Shape ||
-                    this.gameBoard[c.x][c.y + 1] % 6 == (int)p.Color ||
-                    this.gameBoard[c.x][c.y + 1] == 0) &&
-                    (this.gameBoard[c.x - 1][c.y] / 6 == (int)p.Shape ||
-                    this.gameBoard[c.x - 1][c.y] % 6 == (int)p.Color ||
-                    this.gameBoard[c.x - 1][c.y] == 0) &&
-                    (this.gameBoard[c.x][c.y - 1] / 6 == (int)p.Shape ||
-                    this.gameBoard[c.x][c.y - 1] % 6 == (int)p.Color ||
-                    this.gameBoard[c.x][c.y - 1] == 0)
+                    (this.gameBoard[c.X + 1][c.Y] / 6 == (int)p.Shape ||
+                    this.gameBoard[c.X + 1][c.Y] % 6 == (int)p.Color ||
+                    this.gameBoard[c.X + 1][c.Y] == 0) &&
+                    (this.gameBoard[c.X][c.Y+1] / 6 == (int)p.Shape ||
+                    this.gameBoard[c.X][c.Y + 1] % 6 == (int)p.Color ||
+                    this.gameBoard[c.X][c.Y + 1] == 0) &&
+                    (this.gameBoard[c.X - 1][c.Y] / 6 == (int)p.Shape ||
+                    this.gameBoard[c.X - 1][c.Y] % 6 == (int)p.Color ||
+                    this.gameBoard[c.X - 1][c.Y] == 0) &&
+                    (this.gameBoard[c.X][c.Y - 1] / 6 == (int)p.Shape ||
+                    this.gameBoard[c.X][c.Y - 1] % 6 == (int)p.Color ||
+                    this.gameBoard[c.X][c.Y - 1] == 0)
                     )
                 {
                     validMoves.Add(c);
                 }
             }
             return validMoves;
+        }
+        private bool ValidString(Coord coord, Piece piece, Orientation oreint)
+        {
+            bool result = true;
+            if (oreint == Orientation.Horizontal)
+            {
+
+            }
+            else //Vertical
+            {
+
+            }
+
+            return result;
+        }
+
+        private int FindWordLeftIndex(Coord startPosition, Rules.Color color, Rules.Shape shape)
+        {
+            int index = 0;
+
+            return index;
+        }
+
+        private int FindWordRightIndex(Rules.Color color, Rules.Shape shape)
+        {
+            int index = 0;
+
+            return index;
         }
         public void PrintFancyBoard()
         {
@@ -228,14 +270,18 @@ namespace Qwirkle
         }
 
     }
-    public struct Coords
+    public struct Coord
     {
-        public int x, y;
+        private int y;
+        private int x;
 
-        public Coords(int p1, int p2)
+        public Coord(int p1, int p2)
         {
             x = p1;
             y = p2;
         }
+
+        public int X { get => x; set => x = value; }
+        public int Y { get => y; set => y = value; }
     }
 }
