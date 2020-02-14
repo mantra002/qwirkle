@@ -20,13 +20,13 @@ namespace Qwirkle
             Piece p = pb.DrawTile();
             while (p != null)
             {
-                corSet = b.GetPossibleOpenSquares();
-                corSet = b.GetValidSquares(corSet, p);
+                corSet = b.GetValidSquares(p);
                 if (corSet != null && corSet.Count > 0)
                 {
                     c = corSet[r.Next(0, corSet.Count)];
                     b.AddPiece(c.X, c.Y, p);
                     b.PrintFancyBoard();
+                    b.EndTurn();
                 }
                 p = pb.DrawTile();
             }

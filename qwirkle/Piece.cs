@@ -70,10 +70,10 @@ namespace Qwirkle
             switch (this.Shape)
             {
                 case Rules.Shape.Circle:
-                    Console.Write("●");
+                    Console.Write("O");
                     break;
                 case Rules.Shape.Cross:
-                    Console.Write("❈");
+                    Console.Write("+");
                     break;
                 case Rules.Shape.Diamond:
                     Console.Write("◆");
@@ -82,7 +82,7 @@ namespace Qwirkle
                     Console.Write("■");
                     break;
                 case Rules.Shape.Star:
-                    Console.Write("★");
+                    Console.Write("*");
                     break;
                 case Rules.Shape.X:
                     Console.Write("X");
