@@ -12,13 +12,18 @@ namespace Qwirkle
         private int y;
         private int x;
 
-        public Coord(int p1, int p2)
+        public Coord(int x, int y)
         {
-            x = p1;
-            y = p2;
+            this.x = x;
+            this.y = y;
         }
 
         public int X { get => x; set => x = value; }
         public int Y { get => y; set => y = value; }
+
+        public override string ToString()
+        {
+            return "("+this.x.ToString()+", "+this.y.ToString()+")";
+        }
     }
 }

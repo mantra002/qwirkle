@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Qwirkle
 {
@@ -16,6 +17,7 @@ namespace Qwirkle
             Board b = new Board();
             List<Coord> corSet;
             Coord c;
+            Debug.AutoFlush = true;
             b.PrintFancyBoard();
             Piece p = pb.DrawTile();
             while (p != null)

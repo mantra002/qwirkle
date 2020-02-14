@@ -44,8 +44,9 @@ namespace Qwirkle
             return (6 * (int)this.s) + ((int)this.c);
         }
 
-        public void PrintFancyCharacter()
+        public void PrintFancyCharacter(int padSize)
         {
+            string character = "N";
             switch (this.Color)
             {
                 case Rules.Color.Blue:
@@ -55,7 +56,7 @@ namespace Qwirkle
                     Console.ForegroundColor = ConsoleColor.Green;
                     break;
                 case Rules.Color.Orange:
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
                     break;
                 case Rules.Color.Purple:
                     Console.ForegroundColor = ConsoleColor.Magenta;
@@ -70,24 +71,25 @@ namespace Qwirkle
             switch (this.Shape)
             {
                 case Rules.Shape.Circle:
-                    Console.Write("O");
+                    character = "O";
                     break;
                 case Rules.Shape.Cross:
-                    Console.Write("+");
+                    character = "+";
                     break;
                 case Rules.Shape.Diamond:
-                    Console.Write("◆");
+                    character = "D";
                     break;
                 case Rules.Shape.Square:
-                    Console.Write("■");
+                    character = "C";
                     break;
                 case Rules.Shape.Star:
-                    Console.Write("*");
+                    character = "S";
                     break;
                 case Rules.Shape.X:
-                    Console.Write("X");
+                    character = "X";
                     break;
             }
+            Console.Write(character.PadLeft(padSize));
             Console.ForegroundColor = ConsoleColor.White;
         }
         }

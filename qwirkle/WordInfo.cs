@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Qwirkle
 {
@@ -41,6 +42,7 @@ namespace Qwirkle
         }
         public bool ValidateWord()
         {
+            bool valid = true;
             if (this.PiecesInWord.Count > 6 || this.PiecesInWord.Count == 0) return false;
             if(this.wordType == TypeOfWord.ColorMatch)
             {
@@ -48,15 +50,18 @@ namespace Qwirkle
                 List<Rules.Shape> usedShapes = new List<Rules.Shape>();
                 foreach (Piece p in this.PiecesInWord)
                 {
-                    if(p.Color != baseColor)
+                    if (p.Color != baseColor)
                     {
-                        return false;
+                        valid = false;
                     }
-                    if(usedShapes.Contains(p.Shape))
+                    else if (usedShapes.Contains(p.Shape))
                     {
-                        return false;
+                        valid = false;
                     }
-                    usedShapes.Add(p.Shape);
+                    else
+                    {
+                        usedShapes.Add(p.Shape);
+                    }
                 }
             }
             else
@@ -67,16 +72,21 @@ namespace Qwirkle
                 {
                     if (p.Shape != baseShape)
                     {
-                        return false;
+                        valid = false;
                     }
-                    if (usedColors.Contains(p.Color))
+                    else if (usedColors.Contains(p.Color))
                     {
-                        return false;
+                        valid = false;
                     }
-                    usedColors.Add(p.Color);
+                    else
+                    {
+                        usedColors.Add(p.Color);
+                    }
                 }
             }
-            return true;
+            if (valid) Debug.WriteLine("Word IS valid.");
+            else Debug.WriteLine("Word is NOT valid.");
+            return valid;
         }
     }
 }

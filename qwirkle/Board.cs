@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Qwirkle
 {
@@ -131,21 +132,25 @@ namespace Qwirkle
             foreach (Coord c in possibleSquares)
             {
                 if (
-                    (this.gameBoard[c.X + 1][c.Y] / 6 == (int)p.Shape ||
-                    this.gameBoard[c.X + 1][c.Y] % 6 == (int)p.Color ||
+                    (
+                    this.gameBoard[c.X + 1][c.Y]  / 6  == (int)p.Shape ||
+                    this.gameBoard[c.X + 1][c.Y]  % 6  == (int)p.Color ||
                     this.gameBoard[c.X + 1][c.Y] == 0) &&
-                    (this.gameBoard[c.X][c.Y + 1] / 6 == (int)p.Shape ||
-                    this.gameBoard[c.X][c.Y + 1] % 6 == (int)p.Color ||
+                    (
+                    this.gameBoard[c.X][c.Y + 1]  / 6  == (int)p.Shape ||
+                    this.gameBoard[c.X][c.Y + 1]  % 6  == (int)p.Color ||
                     this.gameBoard[c.X][c.Y + 1] == 0) &&
-                    (this.gameBoard[c.X - 1][c.Y] / 6 == (int)p.Shape ||
-                    this.gameBoard[c.X - 1][c.Y] % 6 == (int)p.Color ||
+                    (
+                    this.gameBoard[c.X - 1][c.Y]  / 6  == (int)p.Shape ||
+                    this.gameBoard[c.X - 1][c.Y]  % 6  == (int)p.Color ||
                     this.gameBoard[c.X - 1][c.Y] == 0) &&
-                    (this.gameBoard[c.X][c.Y - 1] / 6 == (int)p.Shape ||
-                    this.gameBoard[c.X][c.Y - 1] % 6 == (int)p.Color ||
-                    this.gameBoard[c.X][c.Y - 1] == 0)
+                    (
+                    this.gameBoard[c.X][c.Y - 1]  / 6  == (int)p.Shape ||
+                    this.gameBoard[c.X][c.Y - 1]  % 6  == (int)p.Color ||
+                    this.gameBoard[c.X][c.Y - 1]       == 0)
                     )
                 {
-                    if(this.WordIsValid(c, p, WordInfo.Orientation.Horizontal) && this.WordIsValid(c, p, WordInfo.Orientation.Vertical))
+                    if(this.WordIsValid(c, p))
                     {
                         validMoves.Add(c);
                     }
@@ -153,32 +158,37 @@ namespace Qwirkle
             }
             return validMoves;
         }
-        private bool WordIsValid(Coord coord, Piece piece, WordInfo.Orientation orient)
+        private bool WordIsValid(Coord coord, Piece piece)
         {
             bool result = true;
-            Coord startOfWord, endOfWord;
-            Direction d1, d2;
+            Coord startOfWord, endOfWord, startOfWord2, endOfWord2;
+            Debug.WriteLine("Trying to add " + piece.ToString() + " at " + coord.ToString());
+            Debug.Indent();
+            WordInfo wi = new WordInfo(null, null, WordInfo.Orientation.Horizontal);
+            Debug.WriteLine("Starting Word Traverse West to East...");
 
-            if (orient == WordInfo.Orientation.Horizontal)
-            {
-                d1 = Direction.East;
-                d2 = Direction.West;
-            }
-            else //Vertical
-            {
-                d1 = Direction.North;
-                d2 = Direction.South;
-            }
-            WordInfo wi = new WordInfo(null, null, orient);
-            startOfWord = TraverseWordAndReturnIndex(coord, piece.Color, piece.Shape, d1, ref wi);
-            endOfWord = TraverseWordAndReturnIndex(coord, piece.Color, piece.Shape, d2, ref wi);
-
+            startOfWord = TraverseWordAndReturnIndex(coord, piece.Color, piece.Shape, Direction.West, ref wi);
+            Debug.Indent();
+            Debug.WriteLine("Found word start at " + startOfWord.ToString());
+            endOfWord = TraverseWordAndReturnIndex(coord, piece.Color, piece.Shape, Direction.East, ref wi);
+            Debug.WriteLine("Word is of type " + wi.WordType);
+            Debug.WriteLine("Found word end at " + endOfWord.ToString());
+            Debug.Unindent();
             wi.StartPosition = startOfWord;
             wi.EndPosition = endOfWord;
-            wi.Orient = orient;
             wi.PiecesInWord.Add(piece);
 
-            return wi.ValidateWord();
+            WordInfo wi2 = new WordInfo(null, null, WordInfo.Orientation.Vertical);
+            Debug.WriteLine("\nStarting Word Traverse North to South...");
+            Debug.Indent();
+            startOfWord2 = TraverseWordAndReturnIndex(coord, piece.Color, piece.Shape, Direction.North, ref wi2);
+            Debug.WriteLine("Found word start at " + startOfWord2.ToString());
+            endOfWord2 = TraverseWordAndReturnIndex(coord, piece.Color, piece.Shape, Direction.South, ref wi2);
+            Debug.WriteLine("Word is of type " + wi2.WordType);
+            Debug.WriteLine("Found word end at " + endOfWord2.ToString());
+            Debug.Unindent();
+            Debug.Unindent();
+            return wi.ValidateWord() && wi2.ValidateWord();
         }
 
         private Coord TraverseWordAndReturnIndex(Coord startPosition, Rules.Color color, Rules.Shape shape, Direction dir, ref WordInfo wi)
@@ -202,11 +212,11 @@ namespace Qwirkle
                     nextY = startPosition.Y + 1;
                     break;
                 case Direction.West:
-                    nextX = startPosition.X + 1;
+                    nextX = startPosition.X - 1;
                     nextY = startPosition.Y;
                     break;
                 case Direction.East:
-                    nextX = startPosition.X - 1;
+                    nextX = startPosition.X + 1;
                     nextY = startPosition.Y;
                     break;
                 default:
@@ -230,28 +240,41 @@ namespace Qwirkle
                 }
             }
 
-            return new Coord(nextX, nextY);
+            return new Coord(startPosition.X, startPosition.Y);
 
 
         } 
 
-        public void PrintFancyBoard()
+        public void PrintFancyBoard(bool printGridNumbers = true)
         {
             Piece p;
-            for (int x = 0; x < this.SizeX; x++)
+            int padSize = Math.Max((int)Math.Floor(Math.Log10((double)this.sizeX) + 1), (int)Math.Floor(Math.Log10((double)this.sizeY) + 1))+1;
+            if (printGridNumbers)
             {
-                for (int y = 0; y < this.SizeY; y++)
+                Console.Write("".PadLeft(padSize+1));
+                for (int x = 0; x < this.SizeX; x++)
                 {
+                    Console.Write((x + " ").PadLeft(padSize));
+                }
+                Console.WriteLine();
+            }
+            for (int y = 0; y < this.SizeY; y++)
+            {
+                for (int x = 0; x < this.SizeX; x++)
+                {
+                
+                    if(x == 0) Console.Write((y + " ").PadLeft(padSize));
                     if (gameBoard[x][y] == 0)
                     {
-                        Console.Write(" ");
+                        Console.Write("".PadLeft(padSize));
                     }
                     else
                     {
-                        new Piece(gameBoard[x][y]).PrintFancyCharacter();
+                        new Piece(gameBoard[x][y]).PrintFancyCharacter(padSize);
                     }
                 }
                 Console.WriteLine();
+
             }
         }
 
