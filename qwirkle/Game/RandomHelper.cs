@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 
 
-namespace Qwirkle
+namespace Qwirkle.Game
 {
     static public class RandomHelper
     {

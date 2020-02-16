@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Qwirkle
+namespace Qwirkle.Game
 {
     public class Coord
     {

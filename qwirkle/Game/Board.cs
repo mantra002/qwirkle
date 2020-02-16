@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace Qwirkle
+namespace Qwirkle.Game
 {
     public class Board
     {
@@ -115,17 +115,17 @@ namespace Qwirkle
                             ));
         }
 
-        public List<Coord> GetValidSquares(Piece p)
+        public List<Move> GetValidSquares(Piece p)
         {
             List<Coord> possibleSquares = GetPossibleOpenSquares();
-            List<Coord> validMoves = new List<Coord>();
-            if (possibleSquares == null || possibleSquares.Count == 0)
+            List<Move> validMoves = new List<Move>();
+            if (possibleSquares == null || possibleSquares.Count == 0 || p == null)
             {
                 return null;
             }
             if (this.newBoard)
             {
-                validMoves.Add(new Coord(this.sizeX / 2, this.sizeY / 2));
+                validMoves.Add(new Move(p, new Coord(this.sizeX / 2, this.sizeY / 2), 1));
                 return validMoves;
             }
 
@@ -150,9 +150,10 @@ namespace Qwirkle
                     this.gameBoard[c.X][c.Y - 1]       == 0)
                     )
                 {
-                    if(this.WordIsValid(c, p))
+                    int score = this.CheckIfWordIsValidAndScore(c, p);
+                    if (score > 0)
                     {
-                        validMoves.Add(c);
+                        validMoves.Add(new Move(p, c, score));
                     }
                 }
             }
@@ -168,8 +169,9 @@ namespace Qwirkle
 #endif
             return validMoves;
         }
-        private bool WordIsValid(Coord coord, Piece piece)
+        private int CheckIfWordIsValidAndScore(Coord coord, Piece piece)
         {
+            int vertScore = 0, horiScore = 0;
             Coord startOfWord, endOfWord, startOfWord2, endOfWord2;
             Debug.WriteLine("Trying to add " + piece.ToString() + " at " + coord.ToString());
             Debug.Indent();
@@ -198,7 +200,11 @@ namespace Qwirkle
             wi2.PiecesInWord.Add(piece);
             Debug.Unindent();
             Debug.Unindent();
-            return wi.ValidateWord() && wi2.ValidateWord();
+            vertScore = wi.ValidateWordAndReturnScore();
+            horiScore = wi2.ValidateWordAndReturnScore();
+
+            if (vertScore > 0 && horiScore > 0) return vertScore + horiScore;
+            else return 0;
         }
 
         private Coord TraverseWordAndReturnIndex(Coord startPosition, Rules.Color color, Rules.Shape shape, Direction dir, ref WordInfo wi)
