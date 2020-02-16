@@ -33,12 +33,12 @@ namespace Qwirkle
         public Orientation Orient { get => orient; set => orient = value; }
         public List<Piece> PiecesInWord = new List<Piece>();
 
-        public WordInfo(Coord startPosition, Coord endPosition, Orientation o)
+        public WordInfo(Coord startPosition, Coord endPosition, Orientation o, TypeOfWord tow = TypeOfWord.Unknown)
         {
             this.startPosition = startPosition;
             this.endPosition = endPosition;
             this.orient = o;
-            this.wordType = TypeOfWord.Unknown;
+            this.wordType = tow;
         }
         public bool ValidateWord()
         {
@@ -84,8 +84,8 @@ namespace Qwirkle
                     }
                 }
             }
-            if (valid) Debug.WriteLine("Word IS valid.");
-            else Debug.WriteLine("Word is NOT valid.");
+            if (valid) Debug.WriteLine(this.Orient.ToString() + " Word IS valid.");
+            else Debug.WriteLine(this.Orient.ToString() + " Word is NOT valid.");
             return valid;
         }
     }

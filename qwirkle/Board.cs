@@ -156,11 +156,20 @@ namespace Qwirkle
                     }
                 }
             }
+#if DEBUG
+            Debug.Print("Current Valid Moves for " + p.ToString());
+            Debug.Indent();
+            foreach (Coord c in validMoves)
+            {
+                Debug.Print(c.ToString());
+            }
+            Debug.Print("");
+            Debug.Unindent();
+#endif
             return validMoves;
         }
         private bool WordIsValid(Coord coord, Piece piece)
         {
-            bool result = true;
             Coord startOfWord, endOfWord, startOfWord2, endOfWord2;
             Debug.WriteLine("Trying to add " + piece.ToString() + " at " + coord.ToString());
             Debug.Indent();
@@ -178,7 +187,7 @@ namespace Qwirkle
             wi.EndPosition = endOfWord;
             wi.PiecesInWord.Add(piece);
 
-            WordInfo wi2 = new WordInfo(null, null, WordInfo.Orientation.Vertical);
+            WordInfo wi2 = new WordInfo(null, null, WordInfo.Orientation.Vertical, wi.WordType);
             Debug.WriteLine("\nStarting Word Traverse North to South...");
             Debug.Indent();
             startOfWord2 = TraverseWordAndReturnIndex(coord, piece.Color, piece.Shape, Direction.North, ref wi2);
@@ -186,6 +195,7 @@ namespace Qwirkle
             endOfWord2 = TraverseWordAndReturnIndex(coord, piece.Color, piece.Shape, Direction.South, ref wi2);
             Debug.WriteLine("Word is of type " + wi2.WordType);
             Debug.WriteLine("Found word end at " + endOfWord2.ToString());
+            wi2.PiecesInWord.Add(piece);
             Debug.Unindent();
             Debug.Unindent();
             return wi.ValidateWord() && wi2.ValidateWord();
@@ -193,7 +203,7 @@ namespace Qwirkle
 
         private Coord TraverseWordAndReturnIndex(Coord startPosition, Rules.Color color, Rules.Shape shape, Direction dir, ref WordInfo wi)
         {
-            int index = 0, nextX, nextY;
+            int nextX, nextY;
             Piece p;
 
             if (wi == null)
@@ -225,29 +235,29 @@ namespace Qwirkle
             if (this.gameBoard[nextX][nextY] != 0)
             {
                 p = new Piece(this.gameBoard[nextX][nextY]);
-                if (p != null && p.Shape == shape && (wi.WordType == WordInfo.TypeOfWord.ShapeMatch || wi.WordType == WordInfo.TypeOfWord.Unknown))
+                if(p != null)
                 {
-                    wi.WordType = WordInfo.TypeOfWord.ShapeMatch;
+                    if (p.Shape == shape && (wi.WordType == WordInfo.TypeOfWord.ShapeMatch || wi.WordType == WordInfo.TypeOfWord.Unknown))
+                    {
+                        wi.WordType = WordInfo.TypeOfWord.ShapeMatch;
+                    }
+                    else if (p.Color == color && (wi.WordType == WordInfo.TypeOfWord.ColorMatch || wi.WordType == WordInfo.TypeOfWord.Unknown))
+                    {
+                        wi.WordType = WordInfo.TypeOfWord.ColorMatch;
+                    }
                     wi.PiecesInWord.Add(p);
                     return TraverseWordAndReturnIndex(new Coord(nextX, nextY), color, shape, dir, ref wi);
-
                 }
-                else if (p != null && p.Color == color && (wi.WordType == WordInfo.TypeOfWord.ColorMatch || wi.WordType == WordInfo.TypeOfWord.Unknown))
-                {
-                    wi.WordType = WordInfo.TypeOfWord.ColorMatch;
-                    wi.PiecesInWord.Add(p);
-                    return TraverseWordAndReturnIndex(new Coord(nextX, nextY), color, shape, dir, ref wi);
-                }
+                
             }
 
-            return new Coord(startPosition.X, startPosition.Y);
+            return startPosition;
 
 
         } 
 
         public void PrintFancyBoard(bool printGridNumbers = true)
         {
-            Piece p;
             int padSize = Math.Max((int)Math.Floor(Math.Log10((double)this.sizeX) + 1), (int)Math.Floor(Math.Log10((double)this.sizeY) + 1))+1;
             if (printGridNumbers)
             {
