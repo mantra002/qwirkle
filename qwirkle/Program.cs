@@ -39,7 +39,7 @@ namespace Qwirkle
                 randTotal += randomPlayer.Score;
 
             }
-            Console.WriteLine("Final Greedy Score was {0}", greedTotal/(double) reps);
+            Console.WriteLine("Final Greedy Score was {0}", greedTotal / (double)reps);
             Console.WriteLine("Final Random Score was {0}", randTotal / (double)reps);
             sw.Stop();
             Console.WriteLine("Program Completed in {0} ms", sw.ElapsedMilliseconds);

@@ -59,6 +59,7 @@
     <Compile Include="Game\Move.cs" />
     <Compile Include="Game\Tile.cs" />
     <Compile Include="Game\TileBag.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game\RandomHelper.cs" />

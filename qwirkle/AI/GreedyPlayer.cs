@@ -13,6 +13,7 @@ namespace Qwirkle.AI
 
         protected override List<Move> findBestMoves(Board currentGameBoard)
         {
+            if (currentGameBoard == null) throw new Exception("Trying an evaluate a null game board!");
             List<Move> moves = new List<Move>();
             Move highestScore = null;
             foreach(Tile t in this.Hand)

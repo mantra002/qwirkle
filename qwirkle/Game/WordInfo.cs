@@ -31,7 +31,9 @@ namespace Qwirkle.Game
         public Coord StartPosition { get => startPosition; set => startPosition = value; }
         public TypeOfWord WordType { get => wordType; set => wordType = value; }
         public Orientation Orient { get => orient; set => orient = value; }
-        public List<Tile> TilesInWord;
+        public List<Tile> TilesInWord { get => tilesInWord; }
+
+        private List<Tile> tilesInWord;
 
         public WordInfo(Coord startPosition, Coord endPosition, Orientation o, TypeOfWord tow = TypeOfWord.Unknown)
         {
@@ -39,7 +41,7 @@ namespace Qwirkle.Game
             this.endPosition = endPosition;
             this.orient = o;
             this.wordType = tow;
-            this.TilesInWord = new List<Tile>();
+            this.tilesInWord = new List<Tile>();
         }
         public int ValidateWordAndReturnScore()
         {

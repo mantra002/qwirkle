@@ -9,12 +9,14 @@ namespace Qwirkle.AI
 {
     public abstract class Player
     {
-        protected List<Tile> Hand { get; set; }
+        private List<Tile> hand;
+
+        protected List<Tile> Hand { get => hand; }
         public int Score { get; set; }
 
         public Player(TileBag bagToDrawFrom)
         {
-            this.Hand = new List<Tile>();
+            this.hand = new List<Tile>();
             this.DrawTiles(bagToDrawFrom, Rules.HandSize);
             this.Score = 0;
         }
@@ -26,7 +28,7 @@ namespace Qwirkle.AI
             {
                 numberOfTiles = bagToDrawFrom.BagCount;
             }
-            for(int i = 0; i < numberOfTiles; i++)
+            for (int i = 0; i < numberOfTiles; i++)
             {
                 this.Hand.Add(bagToDrawFrom.DrawTile());
             }
@@ -53,18 +55,18 @@ namespace Qwirkle.AI
                         this.Hand.Remove(m.Tile);
                         //This is assuming the words formed by the final tile are the score. If their
                         //are words formed by intermediate tiles they will not be scored correctly.
-                        this.Score += m.Score-1;
+                        this.Score += m.Score - 1;
                     }
                     bestMoves = this.findBestMoves(currentGameBoard);
                 }
                 this.Score += tilesPlaced;
             }
-           
-            
+
+
             currentGameBoard.EndTurn();
             this.DrawTiles(bagToDrawFrom, tilesPlaced);
         }
         protected abstract List<Move> findBestMoves(Board currentGameBoard);
-        
+
     }
 }
