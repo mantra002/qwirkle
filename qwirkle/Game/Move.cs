@@ -8,13 +8,13 @@ namespace Qwirkle.Game
 {
     public class Move
     {
-        public Piece Piece { get; set; }
+        public Tile Tile { get; set; }
         public Coord Location { get; set; }
         public int Score { get; set; }
 
-        public Move(Piece p, Coord c, int score = 0)
+        public Move(Tile p, Coord c, int score = 0)
         {
-            this.Piece = p;
+            this.Tile = p;
             this.Location = c;
             this.Score = score;
         }

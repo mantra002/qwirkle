@@ -52,12 +52,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\Player.cs" />
+    <Compile Include="AI\RandomPlayer.cs" />
     <Compile Include="Game\Board.cs" />
     <Compile Include="AI\GreedyPlayer.cs" />
     <Compile Include="Game\Coord.cs" />
     <Compile Include="Game\Move.cs" />
-    <Compile Include="Game\Piece.cs" />
-    <Compile Include="Game\PieceBag.cs" />
+    <Compile Include="Game\Tile.cs" />
+    <Compile Include="Game\TileBag.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Game\RandomHelper.cs" />

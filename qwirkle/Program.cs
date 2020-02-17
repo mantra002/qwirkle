@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Qwirkle.Game;
+using Qwirkle.AI;
 
 namespace Qwirkle
 {
@@ -14,35 +15,37 @@ namespace Qwirkle
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
+            int greedTotal = 0, randTotal = 0;
+            int reps = 1;
             int moveCount = 0;
-            Random r = new Random();
-            PieceBag pb = new PieceBag();
-            Board b = new Board();
-            List<Move> moveSet;
-            Move m;
-            int score = 0;
-            //Debug.AutoFlush = true;
-            b.PrintFancyBoard();
-            Piece p = pb.DrawTile();
-            while (p != null)
+            for (int i = 0; i < reps; i++)
             {
-                moveSet = b.GetValidSquares(p);
-                if (moveSet != null && moveSet.Count > 0)
+                TileBag tb = new TileBag();
+                Board b = new Board();
+                Debug.AutoFlush = true;
+                GreedyPlayer greedyPlayer = new GreedyPlayer(tb);
+                RandomPlayer randomPlayer = new RandomPlayer(tb);
+
+                while (tb.BagCount > 0)
                 {
-                    m = moveSet[r.Next(0, moveSet.Count)];
-                    b.AddPiece(m.Location.X, m.Location.Y, m.Piece);
-                    score += m.Score;
-                    moveCount++;
+                    greedyPlayer.PlayTurn(b, tb);
                     b.PrintFancyBoard();
-                    b.EndTurn();
+                    moveCount++;
+                    randomPlayer.PlayTurn(b, tb);
+                    b.PrintFancyBoard();
+                    moveCount++;
                 }
-                p = pb.DrawTile();
+                greedTotal += greedyPlayer.Score;
+                randTotal += randomPlayer.Score;
+
             }
-            Console.WriteLine("Final Score was {0}", score);
+            Console.WriteLine("Final Greedy Score was {0}", greedTotal/(double) reps);
+            Console.WriteLine("Final Random Score was {0}", randTotal / (double)reps);
             sw.Stop();
             Console.WriteLine("Program Completed in {0} ms", sw.ElapsedMilliseconds);
-            Console.WriteLine("\tSystem completed {0} moves", moveCount);
-            Console.WriteLine("\tAverage time per move was {0}ms", (float)sw.ElapsedMilliseconds / moveCount);
+            Console.WriteLine("\tSystem completed {0} turns", moveCount);
+            Console.WriteLine("\tAverage time per turn was {0}ms", (float)sw.ElapsedMilliseconds / moveCount);
+            
             Console.Read();
         }
     }

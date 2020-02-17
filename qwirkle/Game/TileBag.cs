@@ -6,25 +6,25 @@ using System.Threading.Tasks;
 
 namespace Qwirkle.Game
 {
-    public class PieceBag
+    public class TileBag
     {
-        List<Piece> bag = new List<Piece>();
+        List<Tile> bag = new List<Tile>();
         
-        public PieceBag()
+        public TileBag()
         {
-            this.FillBagWithPieces();
+            this.FillBagWithTiles();
         }
 
-        public void FillBagWithPieces(bool emptyBagFirst = true)
+        public void FillBagWithTiles(bool emptyBagFirst = true)
         {
             if(emptyBagFirst) this.bag.Clear();
-            for(int i = 0; i < Rules.NumberOfDuplicatePieces; i++)
+            for(int i = 0; i < Rules.NumberOfDuplicateTiles; i++)
             {
                 foreach(Rules.Color color in Enum.GetValues(typeof(Rules.Color)))
                 {
                     foreach (Rules.Shape shape in Enum.GetValues(typeof(Rules.Shape)))
                     {
-                        bag.Add(new Piece(color, shape));
+                        bag.Add(new Tile(color, shape));
                     }
                 }
             }
@@ -37,13 +37,13 @@ namespace Qwirkle.Game
             get { return this.bag.Count; }
         }
 
-        public Piece DrawTile()
+        public Tile DrawTile()
         {
             if (bag.Count == 0)
             {
                 return null;
             }
-            Piece p = bag[0];
+            Tile p = bag[0];
             bag.RemoveAt(0);
             return p;
         }

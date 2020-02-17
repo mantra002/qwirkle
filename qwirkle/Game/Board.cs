@@ -14,12 +14,18 @@ namespace Qwirkle.Game
 
         private int sizeX = 0;
         private int sizeY = 0;
-        private Coord lastPiecePlaced;
-        private bool newBoard = true;
+        private Coord lastTilePlaced;
+        private BoardState boardStatus;
 
         public int SizeX { get => sizeX; set => sizeX = value; }
         public int SizeY { get => sizeY; set => sizeY = value; }
 
+        private enum BoardState
+        {
+            NewBoard,
+            NewBoardInProgress,
+            InProgress
+        }
 
         private enum Direction
         {
@@ -43,18 +49,21 @@ namespace Qwirkle.Game
                 }
             }
             this.previousGameBoard = this.cloneBoard(gameBoard);
+            this.boardStatus = BoardState.NewBoard;
         }
 
         public int EndTurn()
         {
             this.previousGameBoard = this.cloneBoard(gameBoard);
-            this.lastPiecePlaced = null;
+            this.lastTilePlaced = null;
+            this.boardStatus = BoardState.InProgress;
             return 0;
         }
 
         public void ResetTurn()
         {
-            this.lastPiecePlaced = null;
+            if (this.boardStatus == BoardState.NewBoardInProgress) this.boardStatus = BoardState.NewBoard;
+            this.lastTilePlaced = null;
             this.gameBoard = this.cloneBoard(this.previousGameBoard);
         }
 
@@ -62,18 +71,18 @@ namespace Qwirkle.Game
         {
             List<Coord> possibleSquares = new List<Coord>();
             int x, y;
-            if (this.newBoard)
+            if (this.boardStatus == BoardState.NewBoard)
             {
                 possibleSquares.Add(new Coord(this.sizeX / 2, this.sizeY / 2));
                 return possibleSquares;
             }
-            if (this.lastPiecePlaced == null)
+            if (this.lastTilePlaced == null)
             {
                 for (x = 1; x < this.SizeX - 1; x++)
                 {
                     for (y = 1; y < this.SizeY - 1; y++)
                     {
-                        if (SquareEmptyWithAdjacentPieces(x, y))
+                        if (SquareEmptyWithAdjacentTiles(x, y))
                         {
                             possibleSquares.Add(new Coord(x, y));
                         }
@@ -83,21 +92,21 @@ namespace Qwirkle.Game
             }
             else
             {
-                x = lastPiecePlaced.X;
-                y = lastPiecePlaced.Y;
-                if (SquareEmptyWithAdjacentPieces(x - 1, y))
+                x = lastTilePlaced.X;
+                y = lastTilePlaced.Y;
+                if (SquareEmptyWithAdjacentTiles(x - 1, y))
                 {
                     possibleSquares.Add(new Coord(x - 1, y));
                 }
-                if (SquareEmptyWithAdjacentPieces(x + 1, y))
+                if (SquareEmptyWithAdjacentTiles(x + 1, y))
                 {
                     possibleSquares.Add(new Coord(x + 1, y));
                 }
-                if (SquareEmptyWithAdjacentPieces(x, y - 1))
+                if (SquareEmptyWithAdjacentTiles(x, y - 1))
                 {
                     possibleSquares.Add(new Coord(x, y - 1));
                 }
-                if (SquareEmptyWithAdjacentPieces(x, y + 1))
+                if (SquareEmptyWithAdjacentTiles(x, y + 1))
                 {
                     possibleSquares.Add(new Coord(x, y + 1));
                 }
@@ -105,7 +114,7 @@ namespace Qwirkle.Game
             return possibleSquares;
         }
 
-        private bool SquareEmptyWithAdjacentPieces(int x, int y)
+        private bool SquareEmptyWithAdjacentTiles(int x, int y)
         {
             return (this.gameBoard[x][y] == 0 && (
                             this.gameBoard[x + 1][y] != 0 ||
@@ -115,7 +124,7 @@ namespace Qwirkle.Game
                             ));
         }
 
-        public List<Move> GetValidSquares(Piece p)
+        public List<Move> GetValidSquares(Tile p)
         {
             List<Coord> possibleSquares = GetPossibleOpenSquares();
             List<Move> validMoves = new List<Move>();
@@ -123,7 +132,7 @@ namespace Qwirkle.Game
             {
                 return null;
             }
-            if (this.newBoard)
+            if (this.boardStatus == BoardState.NewBoard)
             {
                 validMoves.Add(new Move(p, new Coord(this.sizeX / 2, this.sizeY / 2), 1));
                 return validMoves;
@@ -160,44 +169,44 @@ namespace Qwirkle.Game
 #if DEBUG
             Debug.Print("Current Valid Moves for " + p.ToString());
             Debug.Indent();
-            foreach (Coord c in validMoves)
+            foreach (Move m in validMoves)
             {
-                Debug.Print(c.ToString());
+                Debug.Print(m.Location.ToString());
             }
             Debug.Print("");
             Debug.Unindent();
 #endif
             return validMoves;
         }
-        private int CheckIfWordIsValidAndScore(Coord coord, Piece piece)
+        private int CheckIfWordIsValidAndScore(Coord coord, Tile tile)
         {
             int vertScore = 0, horiScore = 0;
             Coord startOfWord, endOfWord, startOfWord2, endOfWord2;
-            Debug.WriteLine("Trying to add " + piece.ToString() + " at " + coord.ToString());
+            Debug.WriteLine("Trying to add " + tile.ToString() + " at " + coord.ToString());
             Debug.Indent();
             WordInfo wi = new WordInfo(null, null, WordInfo.Orientation.Horizontal);
             Debug.WriteLine("Starting Word Traverse West to East...");
 
-            startOfWord = TraverseWordAndReturnIndex(coord, piece.Color, piece.Shape, Direction.West, ref wi);
+            startOfWord = TraverseWordAndReturnIndex(coord, tile.Color, tile.Shape, Direction.West, ref wi);
             Debug.Indent();
             Debug.WriteLine("Found word start at " + startOfWord.ToString());
-            endOfWord = TraverseWordAndReturnIndex(coord, piece.Color, piece.Shape, Direction.East, ref wi);
+            endOfWord = TraverseWordAndReturnIndex(coord, tile.Color, tile.Shape, Direction.East, ref wi);
             Debug.WriteLine("Word is of type " + wi.WordType);
             Debug.WriteLine("Found word end at " + endOfWord.ToString());
             Debug.Unindent();
             wi.StartPosition = startOfWord;
             wi.EndPosition = endOfWord;
-            wi.PiecesInWord.Add(piece);
+            wi.TilesInWord.Add(tile);
 
             WordInfo wi2 = new WordInfo(null, null, WordInfo.Orientation.Vertical, wi.WordType);
             Debug.WriteLine("\nStarting Word Traverse North to South...");
             Debug.Indent();
-            startOfWord2 = TraverseWordAndReturnIndex(coord, piece.Color, piece.Shape, Direction.North, ref wi2);
+            startOfWord2 = TraverseWordAndReturnIndex(coord, tile.Color, tile.Shape, Direction.North, ref wi2);
             Debug.WriteLine("Found word start at " + startOfWord2.ToString());
-            endOfWord2 = TraverseWordAndReturnIndex(coord, piece.Color, piece.Shape, Direction.South, ref wi2);
+            endOfWord2 = TraverseWordAndReturnIndex(coord, tile.Color, tile.Shape, Direction.South, ref wi2);
             Debug.WriteLine("Word is of type " + wi2.WordType);
             Debug.WriteLine("Found word end at " + endOfWord2.ToString());
-            wi2.PiecesInWord.Add(piece);
+            wi2.TilesInWord.Add(tile);
             Debug.Unindent();
             Debug.Unindent();
             vertScore = wi.ValidateWordAndReturnScore();
@@ -210,7 +219,7 @@ namespace Qwirkle.Game
         private Coord TraverseWordAndReturnIndex(Coord startPosition, Rules.Color color, Rules.Shape shape, Direction dir, ref WordInfo wi)
         {
             int nextX, nextY;
-            Piece p;
+            Tile p;
 
             if (wi == null)
             {
@@ -240,7 +249,7 @@ namespace Qwirkle.Game
             }
             if (this.gameBoard[nextX][nextY] != 0)
             {
-                p = new Piece(this.gameBoard[nextX][nextY]);
+                p = new Tile(this.gameBoard[nextX][nextY]);
                 if(p != null)
                 {
                     if (p.Shape == shape && (wi.WordType == WordInfo.TypeOfWord.ShapeMatch || wi.WordType == WordInfo.TypeOfWord.Unknown))
@@ -251,7 +260,7 @@ namespace Qwirkle.Game
                     {
                         wi.WordType = WordInfo.TypeOfWord.ColorMatch;
                     }
-                    wi.PiecesInWord.Add(p);
+                    wi.TilesInWord.Add(p);
                     return TraverseWordAndReturnIndex(new Coord(nextX, nextY), color, shape, dir, ref wi);
                 }
                 
@@ -286,7 +295,7 @@ namespace Qwirkle.Game
                     }
                     else
                     {
-                        new Piece(gameBoard[x][y]).PrintFancyCharacter(padSize);
+                        new Tile(gameBoard[x][y]).PrintFancyCharacter(padSize);
                     }
                 }
                 Console.WriteLine();
@@ -308,16 +317,16 @@ namespace Qwirkle.Game
             return sb.ToString();
         }
 
-        public void AddPiece(int X, int Y, Piece p)
+        public void AddTile(int X, int Y, Tile p)
         {
             if (p != null)
             {
-                if (this.newBoard)
+                if (this.boardStatus == BoardState.NewBoard)
                 {
-                this.newBoard = false;
+                    this.boardStatus = BoardState.NewBoardInProgress;
                 }
 
-                this.lastPiecePlaced = new Coord(X, Y);
+                this.lastTilePlaced = new Coord(X, Y);
 
                 gameBoard[X][Y] = p.ToIndex();
                 if (X < 2)
@@ -355,6 +364,10 @@ namespace Qwirkle.Game
             }
             else
             {
+                if (this.lastTilePlaced != null)
+                {
+                    this.lastTilePlaced.X += 1;
+                }
                 this.gameBoard.Insert(0, new List<int>(this.SizeY));
                 for (int y = 0; y < this.SizeY; y++)
                 {
@@ -375,6 +388,10 @@ namespace Qwirkle.Game
             }
             else
             {
+                if(this.lastTilePlaced != null)
+                {
+                    this.lastTilePlaced.Y += 1;
+                }
                 for (int x = 0; x < this.SizeX; x++)
                 {
                     this.gameBoard[x].Insert(0, 0);

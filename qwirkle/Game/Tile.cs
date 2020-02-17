@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Qwirkle.Game
 {
-    public class Piece
+    public class Tile
     {
         private Rules.Color c;
         private Rules.Shape s;
@@ -23,13 +23,13 @@ namespace Qwirkle.Game
             set { s = value; }
         }
 
-        public Piece(Rules.Color color, Rules.Shape shape)
+        public Tile(Rules.Color color, Rules.Shape shape)
         {
             this.c = color;
             this.s = shape;
         }
 
-        public Piece(int index)
+        public Tile(int index)
             :this((Rules.Color) (index % 6), (Rules.Shape) (index / 6))
         {
         }

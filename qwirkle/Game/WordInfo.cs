@@ -31,7 +31,7 @@ namespace Qwirkle.Game
         public Coord StartPosition { get => startPosition; set => startPosition = value; }
         public TypeOfWord WordType { get => wordType; set => wordType = value; }
         public Orientation Orient { get => orient; set => orient = value; }
-        public List<Piece> PiecesInWord;
+        public List<Tile> TilesInWord;
 
         public WordInfo(Coord startPosition, Coord endPosition, Orientation o, TypeOfWord tow = TypeOfWord.Unknown)
         {
@@ -39,21 +39,21 @@ namespace Qwirkle.Game
             this.endPosition = endPosition;
             this.orient = o;
             this.wordType = tow;
-            this.PiecesInWord = new List<Piece>();
+            this.TilesInWord = new List<Tile>();
         }
         public int ValidateWordAndReturnScore()
         {
             int score = 1;
-            if (this.PiecesInWord.Count > 6 || this.PiecesInWord.Count == 0) return -1;
-            if(this.WordType == TypeOfWord.Unknown && this.PiecesInWord.Count == 1)
+            if (this.TilesInWord.Count > 6 || this.TilesInWord.Count == 0) return -1;
+            if(this.WordType == TypeOfWord.Unknown && this.TilesInWord.Count == 1)
             {
                 //Do nothing
             }
             else if(this.wordType == TypeOfWord.ColorMatch)
             {
-                Rules.Color baseColor = this.PiecesInWord[0].Color;
+                Rules.Color baseColor = this.TilesInWord[0].Color;
                 List<Rules.Shape> usedShapes = new List<Rules.Shape>();
-                foreach (Piece p in this.PiecesInWord)
+                foreach (Tile p in this.TilesInWord)
                 {
                     if (p.Color == baseColor && !usedShapes.Contains(p.Shape))
                     {
@@ -67,9 +67,9 @@ namespace Qwirkle.Game
             }
             else if(this.wordType == TypeOfWord.ShapeMatch)
             {
-                Rules.Shape baseShape = this.PiecesInWord[0].Shape;
+                Rules.Shape baseShape = this.TilesInWord[0].Shape;
                 List<Rules.Color> usedColors = new List<Rules.Color>();
-                foreach (Piece p in this.PiecesInWord)
+                foreach (Tile p in this.TilesInWord)
                 {
                     if (p.Shape == baseShape && !usedColors.Contains(p.Color))
                     {
@@ -87,13 +87,13 @@ namespace Qwirkle.Game
             }
             if (score > 0)
             {
-                if(this.PiecesInWord.Count == 6)
+                if(this.TilesInWord.Count == 6)
                 {
                     score = 12;
                 }
                 else
                 {
-                    score = this.PiecesInWord.Count;
+                    score = this.TilesInWord.Count;
                 }
                 Debug.WriteLine(this.Orient.ToString() + " Word IS valid.");
             }

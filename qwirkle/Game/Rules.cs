@@ -8,9 +8,9 @@ namespace Qwirkle.Game
 {
     public static class Rules
     {
-        public const int NumberOfDuplicatePieces = 3;
+        public const int NumberOfDuplicateTiles = 3;
         public const int InitialBoardSize = 5;
-
+        public const int HandSize = 6;
         public enum Color
         {
             Red,
